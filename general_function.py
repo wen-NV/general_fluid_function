@@ -49,6 +49,23 @@ def friction_factor(Re):
         return 0.0032+0.221/ (Re ** 0.237)  # Approximate for turbulent flow
 
 
+
+def tube_loss (Q, rho, mu, tube_ID, tube_length):
+    """Calculate the pressure drop in a tube using the Darcy-Weisbach equation.
+    Friction factor, f []
+    Tube length, L [m]
+    Tube ID, D [m]
+    Density, rho []
+    Flow rate, Q [m^3/s]"""
+    Re = reynolds_number(Q, tube_ID, rho, mu)
+    f = friction_factor(Re)  # Assuming water-like viscosity for Re calculation
+    A = np.pi * (tube_ID/2)**2
+    V = Q / A
+    return f * (tube_length / tube_ID) * (rho * V**2 / 2)
+
+
+
+
 def effective_f_friction(num,f,length,inner_diameter):
     Delta = length/(num+1)
     x = Delta/inner_diameter
@@ -97,6 +114,21 @@ def get_zeta_bend(reynolds, r_over_di):
     log_zeta_points = np.log10(data[r_over_di])
     
     return 10**np.interp(log_re, log_re_points, log_zeta_points)
+
+def bend_tube_loss (Q, rho, mu, tube_ID, tube_length):
+    """Calculate the pressure drop in a tube using the Darcy-Weisbach equation.
+    Friction factor, f []
+    Tube length, L [m]
+    Tube ID, D [m]
+    Density, rho []
+    Flow rate, Q [m^3/s]"""
+    Re = reynolds_number(Q, tube_ID, rho, mu)
+    f = friction_factor(Re)  # Assuming water-like viscosity for Re calculation
+    f_bend = 4 * get_zeta_bend(Re, 11.71)  # Assuming a bend radius of 11.71*D for smooth bends  # need to be check for how many bends, the ratio will change, according to VDI Heat Atlas 4!!!
+    A = np.pi * (tube_ID/2)**2
+    V = Q / A
+    return (f * (tube_length / tube_ID) + f_bend) * (rho * V**2 / 2)
+
 
 # --- Example Usage ---
 re_val = 5000
