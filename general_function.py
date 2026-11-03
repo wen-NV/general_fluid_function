@@ -3,6 +3,9 @@
 # Jupytext: {"Function for tolerence distribution": {"extension": ".py", "format_name": "light", "format_version": "0.4"}}
 import numpy as np
 
+import math
+from fluids.friction import Churchill_1977
+
 def Gaussian_tolerence(ID, tolerance,std,num_samples):
     nominal = ID
     std_dev = tolerance / std
@@ -47,6 +50,14 @@ def friction_factor(Re):
         return 0.3164 / (Re ** 0.25)  # Approximate for turbulent flow
     else: # Is this condition Re>1e5 ever met?
         return 0.0032+0.221/ (Re ** 0.237)  # Approximate for turbulent flow
+
+
+def friction_factor_fluids(Re):
+    """Darcy friction factor for a smooth-wall tube."""
+    if not math.isfinite(Re) or Re <= 0:
+        raise ValueError("Reynolds number must be finite and positive.")
+
+    return Churchill_1977(Re, eD=0.0)
 
 
 
@@ -158,7 +169,7 @@ def get_zeta_in(small_ID, large_ID, regime='turbulent', Re=None):
     float : Estimated drag coefficient (zeta_in)
     """
 
-    area_ratio = small_ID/large_ID
+    area_ratio = (small_ID / large_ID)**2
     # 1. Input Validation
     if not (0.0 <= area_ratio <= 1.0):
         raise ValueError("area_ratio (A2/A1) must be between 0.0 and 1.0")
@@ -602,7 +613,7 @@ def turbulent_flow_3(P_in, P_out, fluid, T, ID, length, ID2, length2,ID3, length
 
         #return P_in- P_out - (50 * (rho * V**2 / 2))
         #return P_in- P_out - (dp_tube + dp_tube2 + dp_tube3 + dp_in_out + dp_barb1 + dp_barb2 + dp_orifice)
-          #return P_inlet- P_outlet + dp_h - wash_time* (dp_tube  + dp_in_out + dp_barb+dp_h+dp_Yconver) dp_h???
+        #return P_inlet- P_outlet + dp_h - wash_time* (dp_tube  + dp_in_out + dp_barb+dp_h+dp_Yconver) dp_h???
 
     Q_guess = 0.001  # Initial guess for flow rate (m³/s)
     #num_valves_guess = 0
