@@ -274,12 +274,12 @@ def Lbarb_dp (Q,mu, rho, ID_barb_in,ID_barb_out, ID_in, ID_out, length_barb):
             # step 3: Driven the liquid from the barb ID_2 to the 6.35 multilater tubing
     f_outlet_barb = OutletDrag_coefficient(ID_barb_out, ID_out)   #liquid goes out from barb to the 6.35 multilayer tubing
     
-    dp_barb = 1* ((f_inlet_barb + f_outlet_barb + 1.15  ) * (rho *  V_barb**2 / 2)        
+    dp_Lbarb = 1* ((f_inlet_barb + f_outlet_barb + 1.15  ) * (rho *  V_barb**2 / 2)        
                                  +(f_barb ) * ((length_barb) / ((ID_barb_in+ID_barb_out)/2)) * (rho * V_barb**2 / 2))
 
     
 
-    return dp_barb
+    return dp_Lbarb
 
 
 """
@@ -402,7 +402,7 @@ def mixer_feed_pressure_drop(
         fd=fd_mixer,
     )       #K_mixer =K L/T *f_D*L/​D​
 
-    dP_mixer = 16 * rho * velocity_mixer**2 / 2 
+    dP_mixer = 260 * rho * velocity_mixer**2 / 2  # based on the experiment test for 12cm twist static mixer in 6.35mm tube, 260 is the K value for this mixer, need to be check for other mixers
 
     """
     pressure_drop_mixer_branch = (
@@ -423,7 +423,7 @@ def mixer_feed_pressure_drop(
 
     return {
         'mixer_inlet_pressure_drop': dp_tube_connection_mixer,
-        'mixer_inlet_pressure_drop': dp_mixer_connection_tube,
+        'mixer_outlet_pressure_drop': dp_mixer_connection_tube,
         'mixer_pressure_drop': dP_mixer,
         'pressure_drop_mixer_branch': pressure_drop_mixer_branch    
     } 
@@ -865,7 +865,7 @@ def turbulent_flow_X(P_in, P_out, fluid, T, ID, length, ID2, length2,ID3, length
                              +(f_barb ) * ((length_barb) / ((ID_barb_1+ID_barb_2)/2)) * (rho * V_barb**2 / 2))
 
 
-        dp_barb3 = barb_dp (Q,mu, ID_barb_1,ID_barb_2, ID2, ID, length_barb)
+        dp_barb3 = barb_dp (Q,mu, rho ID_barb_1,ID_barb_2, ID2, ID, length_barb)
         
         # step 4: Driven the liquid from 6.35mm PAmulti tubing ID to the barb ID_2
         f_inlet_barb2 = get_zeta_in(ID_barb_2, ID, regime='turbulent', Re = (Re + Re_barb)/2) #InletDrag_coefficient(Re,ID_barb_2,ID)
