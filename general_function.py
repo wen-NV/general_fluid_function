@@ -865,7 +865,7 @@ def turbulent_flow_X(P_in, P_out, fluid, T, ID, length, ID2, length2,ID3, length
                              +(f_barb ) * ((length_barb) / ((ID_barb_1+ID_barb_2)/2)) * (rho * V_barb**2 / 2))
 
 
-        dp_barb3 = barb_dp (Q,mu, rho ID_barb_1,ID_barb_2, ID2, ID, length_barb)
+        dp_barb3 = barb_dp (Q,mu, rho, ID_barb_1,ID_barb_2, ID2, ID, length_barb)
         
         # step 4: Driven the liquid from 6.35mm PAmulti tubing ID to the barb ID_2
         f_inlet_barb2 = get_zeta_in(ID_barb_2, ID, regime='turbulent', Re = (Re + Re_barb)/2) #InletDrag_coefficient(Re,ID_barb_2,ID)
